@@ -283,6 +283,36 @@
       .events-row .calc-btn { max-width: none !important; }
       .summary { grid-template-columns: repeat(3, 1fr); }
     }
+    @media (max-width: 768px) {
+      .form-card, .schedule-section { padding: 24px 20px; }
+      .form-fields { grid-template-columns: 1fr 1fr !important; }
+      .form-top { flex-direction: column; gap: 12px; }
+      .form-top h1 { font-size: 20px; }
+      .schedule-wrap { overflow-x: auto; }
+      .schedule-wrap table { min-width: 700px; }
+      .event-entry input[type="date"] { width: 130px; }
+    }
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .app { gap: 16px; }
+      .form-card, .schedule-section { padding: 16px 12px; border-radius: 12px; }
+      .form-fields { grid-template-columns: 1fr !important; gap: 12px; }
+      .form-top h1 { font-size: 18px; }
+      .form-top .subtitle { font-size: 13px; }
+      .form-top > div:last-child { flex-wrap: wrap; }
+      .summary { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .summary-item { padding: 10px; }
+      .summary-item .value { font-size: 15px; }
+      .schedule-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+      .schedule-header span { font-size: 13px; }
+      .calc-btn { width: 100% !important; max-width: none !important; }
+      .event-entry { gap: 6px; }
+      .event-entry input[type="date"] { width: 100%; }
+      .events-row { gap: 12px; }
+      .event-col .section-label { margin-bottom: 6px; }
+      .save-btn { padding: 8px 14px; font-size: 13px; }
+      input, select { font-size: 16px; }
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
