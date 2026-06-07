@@ -109,15 +109,20 @@
       font-size: 16px;
     }
 
-    .events-row {
+    .events-layout {
       display: flex;
-      gap: 20px;
-      margin-bottom: 20px;
+      gap: 24px;
+      align-items: flex-start;
     }
-    .events-row .event-col {
+    .events-layout .events-col {
       flex: 1;
+      min-width: 0;
     }
-    .event-col .section-label {
+    .events-layout .calc-col {
+      width: 300px;
+      flex-shrink: 0;
+    }
+    .events-col .section-label {
       font-size: 14px;
       font-weight: 600;
       color: #888;
@@ -128,6 +133,13 @@
       gap: 8px;
       align-items: center;
       margin-bottom: 8px;
+    }
+    .event-entry select.event-type {
+      width: 140px;
+      padding: 8px 10px;
+      font-size: 13px;
+      flex-shrink: 0;
+      cursor: pointer;
     }
     .event-entry input[type="date"] {
       width: 150px;
@@ -142,13 +154,6 @@
     }
     .event-entry .danger {
       flex-shrink: 0;
-    }
-
-    .bottom-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
     }
 
     button {
@@ -185,6 +190,10 @@
       min-width: 200px;
     }
     .error { color: #e74c3c; font-size: 13px; margin-top: 8px; }
+    .saved { color: #27ae60; }
+    .cost { color: #e74c3c; }
+    .event-entry { flex-wrap: wrap; }
+    .event-entry .danger { align-self: flex-start; }
 
     .results {
       padding: 16px 20px;
@@ -204,31 +213,46 @@
     .result-value { font-weight: 700; color: #333; font-size: 15px; }
     .result-value.highlight { color: #667eea; font-size: 18px; }
 
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+    .summary-new {
+      display: flex;
+      gap: 16px;
       margin-bottom: 24px;
     }
-    .summary-item {
+    .summary-box {
+      flex: 1;
       background: #f8f9ff;
       border-radius: 10px;
-      padding: 14px 16px;
-      text-align: center;
+      padding: 16px 20px;
     }
-    .summary-item .label {
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 4px;
+    .summary-box-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .summary-item .value {
-      font-size: 18px;
+    .summary-box-title .info-icon {
+      cursor: help;
+      font-size: 14px;
+      color: #aaa;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 0;
+    }
+    .summary-row .summary-label {
+      font-size: 13px;
+      color: #777;
+    }
+    .summary-row .summary-value {
+      font-size: 15px;
       font-weight: 700;
       color: #333;
     }
-    .summary-item .value.paid { color: #27ae60; }
-    .summary-item .value.left { color: #e74c3c; }
-
     .schedule-header {
       display: flex;
       justify-content: space-between;
@@ -276,12 +300,34 @@
     .schedule-wrap tr.rate-change td { background: #fff3e0 !important; }
     .schedule-wrap tr.rate-change td:nth-child(2) { font-weight: 600; color: #e67e22; }
 
+    .events-summary { margin-bottom: 20px; }
+    .events-summary-wrap {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    .events-summary-wrap table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 720px;
+    }
+    .events-summary-wrap th {
+      background: #f8f8f8;
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #555;
+      white-space: nowrap;
+    }
+    .events-summary-wrap td {
+      padding: 8px 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .events-summary-wrap tr:nth-child(even) td { background: #fafafa; }
+
     @media (max-width: 1000px) {
       .form-fields { grid-template-columns: 1fr 1fr 1fr !important; }
-      .events-row { flex-direction: column; }
-      .events-row .event-col { text-align: left !important; }
-      .events-row .calc-btn { max-width: none !important; }
-      .summary { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 768px) {
       .form-card, .schedule-section { padding: 24px 20px; }
@@ -291,6 +337,8 @@
       .schedule-wrap { overflow-x: auto; }
       .schedule-wrap table { min-width: 700px; }
       .event-entry input[type="date"] { width: 130px; }
+      .events-layout { flex-direction: column; }
+      .events-layout .calc-col { width: 100%; }
     }
     @media (max-width: 480px) {
       body { padding: 10px; }
@@ -300,21 +348,25 @@
       .form-top h1 { font-size: 18px; }
       .form-top .subtitle { font-size: 13px; }
       .form-top > div:last-child { flex-wrap: wrap; }
-      .summary { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      .summary-item { padding: 10px; }
-      .summary-item .value { font-size: 15px; }
+      .summary-new { flex-direction: column; }
       .schedule-header { flex-direction: column; gap: 8px; align-items: flex-start; }
       .schedule-header span { font-size: 13px; }
       .calc-btn { width: 100% !important; max-width: none !important; }
       .event-entry { gap: 6px; }
       .event-entry input[type="date"] { width: 100%; }
-      .events-row { gap: 12px; }
-      .event-col .section-label { margin-bottom: 6px; }
+      .event-entry select.event-type { width: 100%; }
+      .events-col .section-label { margin-bottom: 6px; }
       .save-btn { padding: 8px 14px; font-size: 13px; }
       input, select { font-size: 16px; }
     }
+
+    @media print {
+      body > *:not(.print-only) { display: none !important; }
+      .print-only { display: block !important; position: static !important; padding: 20px !important; background: white !important; }
+      .print-only .schedule-wrap { max-height: none !important; overflow: visible !important; }
+      .print-only table { font-size: 10px !important; }
+    }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
   <div class="app">
@@ -361,20 +413,14 @@
         </div>
       </div>
 
-      <div class="events-row">
-        <div class="event-col">
-          <div class="section-label">Prepayments</div>
-          <div id="prepayList"></div>
-          <button class="outline" id="addPrepay">+ Add Prepayment</button>
+      <div class="events-layout">
+        <div class="events-col">
+          <div class="section-label">Events</div>
+          <div id="eventList"></div>
+          <button class="outline" id="addEvent">+ Add Event</button>
         </div>
-        <div class="event-col">
-          <div class="section-label">Rate Changes</div>
-          <div id="rateChangeList"></div>
-          <button class="outline" id="addRateChange">+ Add Rate Change</button>
-        </div>
-        <div class="event-col" style="text-align:right">
-          <div class="section-label" style="visibility:hidden">_</div>
-          <button class="calc-btn" id="calculate" style="width:100%;max-width:260px">Calculate</button>
+        <div class="calc-col">
+          <button class="calc-btn" id="calculate" style="width:100%">Calculate</button>
           <div class="error" id="error"></div>
           <div class="results" id="results">
             <div class="result-row">
@@ -389,32 +435,80 @@
               <span class="result-label">Total Interest</span>
               <span class="result-value" id="interest">$0</span>
             </div>
+            <div class="result-row">
+              <span class="result-label">Original Last EMI Date</span>
+              <span class="result-value" id="originalEndDate" style="font-weight:600;color:#555;font-size:14px">—</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="schedule-section" id="scheduleSection">
-      <div class="summary">
-        <div class="summary-item">
-          <div class="label">EMI Paid</div>
-          <div class="value paid" id="sumEmi">$0</div>
+      <div class="summary-new">
+        <div class="summary-box">
+          <div class="summary-box-title">
+            Till Date
+            <span class="info-icon" title="Count of EMIs paid till date">ⓘ</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">EMIs Paid</span>
+            <span class="summary-value" id="sumEmisPaid">0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Total EMI Amount Paid</span>
+            <span class="summary-value" id="sumTotalEmi">$0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Principal Paid</span>
+            <span class="summary-value" id="sumPrincipalPaid">$0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Interest Paid</span>
+            <span class="summary-value" id="sumInterestPaid">$0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Pre-payments</span>
+            <span class="summary-value" id="sumPrepayments">$0</span>
+          </div>
+          <div class="summary-row" style="border-top:1px solid #efefef;padding-top:8px;margin-top:4px">
+            <span class="summary-label" style="font-weight:600">Total Principal Paid</span>
+            <span class="summary-value" id="sumTotalPrincipalPaid" style="font-weight:600">$0</span>
+          </div>
         </div>
-        <div class="summary-item">
-          <div class="label">Principal Paid</div>
-          <div class="value paid" id="sumPrincipal">$0</div>
+        <div class="summary-box">
+          <div class="summary-box-title">Remaining</div>
+          <div class="summary-row">
+            <span class="summary-label">EMIs Left</span>
+            <span class="summary-value" id="sumEmisLeft">0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Principal Left</span>
+            <span class="summary-value" id="sumLeft">$0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Effective Last EMI Date</span>
+            <span class="summary-value highlight" id="sumLastEmiDate">—</span>
+          </div>
         </div>
-        <div class="summary-item">
-          <div class="label">Interest Paid</div>
-          <div class="value paid" id="sumInterest">$0</div>
-        </div>
-        <div class="summary-item">
-          <div class="label">Principal Left</div>
-          <div class="value left" id="sumLeft">$0</div>
-        </div>
-        <div class="summary-item">
-          <div class="label">EMIs Left</div>
-          <div class="value left" id="sumEmisLeft">0</div>
+      </div>
+
+      <div id="eventsSummary" class="events-summary" style="display:none">
+        <h3 style="font-size:16px;color:#333;margin-bottom:10px">Events Summary</h3>
+        <div class="events-summary-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Event Type</th>
+                <th>Effective Date</th>
+                <th>Value</th>
+                <th>Per-event Impact</th>
+                <th>Cumulative Impact</th>
+                <th>Last EMI Date</th>
+              </tr>
+            </thead>
+            <tbody id="eventsSummaryBody"></tbody>
+          </table>
         </div>
       </div>
 
@@ -468,14 +562,11 @@
     const currencySelect = document.getElementById('currency');
     const saveBtn = document.getElementById('saveBtn');
     const saveMsg = document.getElementById('saveMsg');
-    const prepayList = document.getElementById('prepayList');
-    const addPrepayBtn = document.getElementById('addPrepay');
-    const rateChangeList = document.getElementById('rateChangeList');
-    const addRateBtn = document.getElementById('addRateChange');
+    const eventList = document.getElementById('eventList');
+    const addEventBtn = document.getElementById('addEvent');
 
     let currencySymbol = '$';
-    let prepayments = [];
-    let rateChanges = [];
+    let events = [];
 
     currencySelect.addEventListener('change', () => {
       currencySymbol = currencySelect.value;
@@ -492,83 +583,70 @@
       setTimeout(() => saveMsg.classList.remove('show'), 2000);
     }
 
-    function createPrepayEntry(dateVal, amountVal) {
+    function createEventEntry(type, dateVal, valueVal) {
       const div = document.createElement('div');
       div.className = 'event-entry';
+      const isRate = type === 'rate';
       div.innerHTML = `
-        <input type="date" class="prepay-date" value="${dateVal || ''}">
-        <input type="number" class="prepay-amount" placeholder="Amount" min="0" step="0.01" value="${amountVal || ''}">
+        <select class="event-type">
+          <option value="prepay" ${type === 'prepay' ? 'selected' : ''}>Prepayment</option>
+          <option value="rate" ${isRate ? 'selected' : ''}>Rate Change</option>
+        </select>
+        <input type="date" class="event-date" value="${dateVal || ''}">
+        <input type="number" class="event-value" placeholder="${isRate ? 'Rate %' : 'Amount'}" min="0" step="${isRate ? '0.05' : '0.01'}" value="${valueVal || ''}">
         <button class="danger">&times;</button>
       `;
+      div.querySelector('.event-type').addEventListener('change', function() {
+        const valInput = div.querySelector('.event-value');
+        if (this.value === 'rate') {
+          valInput.placeholder = 'Rate %';
+          valInput.step = '0.05';
+        } else {
+          valInput.placeholder = 'Amount';
+          valInput.step = '0.01';
+        }
+        rebuildEvents();
+        if (scheduleSection.classList.contains('show')) runCalculation();
+      });
       div.querySelector('.danger').addEventListener('click', () => {
         div.remove();
-        rebuildPrepayments();
+        rebuildEvents();
         if (scheduleSection.classList.contains('show')) runCalculation();
       });
       div.querySelectorAll('input').forEach(inp => {
         inp.addEventListener('input', () => {
-          rebuildPrepayments();
+          rebuildEvents();
           if (scheduleSection.classList.contains('show')) runCalculation();
         });
       });
-      prepayList.appendChild(div);
-      prepayments.push({ date: dateVal || '', amount: amountVal || '' });
+      eventList.appendChild(div);
+      events.push({ type, date: dateVal || '', value: valueVal || '' });
     }
 
-    function rebuildPrepayments() {
-      const entries = prepayList.querySelectorAll('.event-entry');
-      prepayments = [];
+    function rebuildEvents() {
+      const entries = eventList.querySelectorAll('.event-entry');
+      events = [];
       entries.forEach(e => {
-        const date = e.querySelector('.prepay-date').value;
-        const amount = parseFloat(e.querySelector('.prepay-amount').value);
-        if (date && amount > 0) {
-          prepayments.push({ date, amount });
+        const type = e.querySelector('.event-type').value;
+        const date = e.querySelector('.event-date').value;
+        const value = parseFloat(e.querySelector('.event-value').value);
+        if (date && !isNaN(value) && value > 0) {
+          events.push({ type, date, value });
         }
       });
     }
 
-    addPrepayBtn.addEventListener('click', () => createPrepayEntry('', ''));
-
-    function createRateEntry(dateVal, rateVal) {
-      const div = document.createElement('div');
-      div.className = 'event-entry';
-      div.innerHTML = `
-        <input type="date" class="rate-date" value="${dateVal || ''}">
-        <input type="number" class="rate-value" placeholder="Rate %" min="0" step="0.05" value="${rateVal || ''}">
-        <button class="danger">&times;</button>
-      `;
-      div.querySelector('.danger').addEventListener('click', () => {
-        div.remove();
-        rebuildRateChanges();
-        if (scheduleSection.classList.contains('show')) runCalculation();
-      });
-      div.querySelectorAll('input').forEach(inp => {
-        inp.addEventListener('input', () => {
-          rebuildRateChanges();
-          if (scheduleSection.classList.contains('show')) runCalculation();
-        });
-      });
-      rateChangeList.appendChild(div);
-      rateChanges.push({ date: dateVal || '', rate: rateVal || '' });
-    }
-
-    function rebuildRateChanges() {
-      const entries = rateChangeList.querySelectorAll('.event-entry');
-      rateChanges = [];
-      entries.forEach(e => {
-        const date = e.querySelector('.rate-date').value;
-        const rate = parseFloat(e.querySelector('.rate-value').value);
-        if (date && rate != null && !isNaN(rate)) {
-          rateChanges.push({ date, rate });
-        }
-      });
-    }
-
-    addRateBtn.addEventListener('click', () => createRateEntry('', ''));
+    addEventBtn.addEventListener('click', () => createEventEntry('prepay', '', ''));
 
     function formatMoney(n) {
       if (n == null || isNaN(n)) n = 0;
-      return currencySymbol + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      const [intPart, decPart] = n.toFixed(2).split('.');
+      const last3 = intPart.slice(-3);
+      const rest = intPart.slice(0, -3);
+      if (rest) {
+        return currencySymbol + rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + last3 + '.' + decPart;
+      }
+      return currencySymbol + last3 + '.' + decPart;
     }
 
     function calculateEMI(principal, annualRate, years) {
@@ -643,9 +721,111 @@
       return today.getDate() >= startDay ? diffMonths + 1 : diffMonths;
     }
 
+    function computeEventImpacts(principal, annualRate, years, startDate, prepays, rates, fixedEmi) {
+      const timeline = [];
+      prepays.forEach((p, i) => timeline.push({ type: 'prepay', idx: i, date: new Date(p.date + 'T00:00:00') }));
+      rates.forEach((r, i) => timeline.push({ type: 'rate', idx: i, date: new Date(r.date + 'T00:00:00') }));
+      timeline.sort((a, b) => a.date - b.date);
+
+      const baseSchedule = buildSchedule(principal, annualRate, years, startDate, [], [], fixedEmi);
+      function schedStats(s) {
+        return {
+          interest: s.reduce((sum, r) => sum + r.interest, 0),
+          emis: s.length,
+          lastDate: s.length > 0 ? s[s.length - 1].dueDate : startDate,
+        };
+      }
+
+      const cumPrepays = [], cumRates = [];
+      const stepResults = [{ prepays: [], rates: [], stats: schedStats(baseSchedule) }];
+
+      for (const event of timeline) {
+        if (event.type === 'prepay') cumPrepays.push(prepays[event.idx]);
+        else cumRates.push(rates[event.idx]);
+        const sched = buildSchedule(principal, annualRate, years, startDate, [...cumPrepays], [...cumRates], fixedEmi);
+        stepResults.push({ stats: schedStats(sched) });
+      }
+
+      const impacts = { prepay: [], rate: [] };
+      for (let step = 1; step < stepResults.length; step++) {
+        const event = timeline[step - 1];
+        const prev = stepResults[step - 1].stats;
+        const curr = stepResults[step].stats;
+        impacts[event.type][event.idx] = {
+          marginal: { interestSaved: prev.interest - curr.interest, emiReduced: prev.emis - curr.emis },
+          cumulative: { interestSaved: stepResults[0].stats.interest - curr.interest, emiReduced: stepResults[0].stats.emis - curr.emis, lastDate: curr.lastDate },
+        };
+      }
+      return impacts;
+    }
+
+    function renderEventsSummary(validEvents, impacts) {
+      const container = document.getElementById('eventsSummary');
+      const tbody = document.getElementById('eventsSummaryBody');
+
+      if (validEvents.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      const rows = [];
+      let pi = 0, ri = 0;
+      validEvents.forEach(ev => {
+        if (ev.type === 'prepay' && impacts.prepay[pi]) {
+          rows.push({ ...ev, impact: impacts.prepay[pi] });
+          pi++;
+        } else if (ev.type === 'rate' && impacts.rate[ri]) {
+          rows.push({ ...ev, impact: impacts.rate[ri] });
+          ri++;
+        }
+      });
+
+      rows.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      tbody.innerHTML = rows.map(r => {
+        const isPrepay = r.type === 'prepay';
+        const detail = isPrepay ? formatMoney(r.value) : r.value + '%';
+        const m = r.impact.marginal;
+        const c = r.impact.cumulative;
+
+        const perEvent = [];
+        if (m.interestSaved !== 0) {
+          const cls = m.interestSaved > 0 ? 'saved' : 'cost';
+          const sym = m.interestSaved > 0 ? '↓' : '↑';
+          perEvent.push('<span class="' + cls + '">' + sym + ' ' + formatMoney(Math.abs(m.interestSaved)) + '</span>');
+        }
+        if (m.emiReduced !== 0) {
+          const cls = m.emiReduced > 0 ? 'saved' : 'cost';
+          const sym = m.emiReduced > 0 ? '↓' : '↑';
+          perEvent.push('<span class="' + cls + '">' + sym + ' ' + Math.abs(m.emiReduced) + ' EMI</span>');
+        }
+
+        const cumulative = [];
+        if (c.interestSaved !== 0) {
+          const cls = c.interestSaved > 0 ? 'saved' : 'cost';
+          const sym = c.interestSaved > 0 ? '↓' : '↑';
+          cumulative.push('<span class="' + cls + '">' + sym + ' ' + formatMoney(Math.abs(c.interestSaved)) + '</span>');
+        }
+        if (c.emiReduced !== 0) {
+          const cls = c.emiReduced > 0 ? 'saved' : 'cost';
+          const sym = c.emiReduced > 0 ? '↓' : '↑';
+          cumulative.push('<span class="' + cls + '">' + sym + ' ' + Math.abs(c.emiReduced) + ' EMI</span>');
+        }
+        return '<tr>' +
+          '<td style="font-weight:600">' + (isPrepay ? 'Prepayment' : 'Rate Change') + '</td>' +
+          '<td>' + formatDate(new Date(r.date + 'T00:00:00')) + '</td>' +
+          '<td>' + detail + '</td>' +
+          '<td>' + (perEvent.join(' · ') || '—') + '</td>' +
+          '<td>' + (cumulative.length ? cumulative.join(' · ') : '—') + '</td>' +
+          '<td>' + formatDate(c.lastDate) + '</td>' +
+        '</tr>';
+      }).join('');
+
+      container.style.display = 'block';
+    }
+
     function saveToStorage() {
-      rebuildPrepayments();
-      rebuildRateChanges();
+      rebuildEvents();
       const data = {
         amount: amountInput.value,
         rate: rateInput.value,
@@ -653,8 +833,7 @@
         startDate: startDateInput.value,
         fixedEmi: fixedEmiInput.value,
         currency: currencySelect.value,
-        prepayments: prepayments.filter(p => p.date && p.amount > 0),
-        rateChanges: rateChanges.filter(r => r.date && r.rate != null && !isNaN(r.rate) && r.rate > 0)
+        events: events.filter(e => e.date && e.value > 0)
       };
       localStorage.setItem('loanCalc', JSON.stringify(data));
     }
@@ -706,15 +885,28 @@
 
       saveToStorage();
 
-      const validPrepayments = prepayments.filter(p => p.date && p.amount > 0);
-      const validRates = rateChanges.filter(r => r.date && r.rate != null && !isNaN(r.rate) && r.rate > 0);
+      const validEvents = events.filter(e => e.date && e.value > 0);
+      const validPrepayments = validEvents.filter(e => e.type === 'prepay').map(e => ({ date: e.date, amount: e.value }));
+      const validRates = validEvents.filter(e => e.type === 'rate').map(e => ({ date: e.date, rate: e.value }));
       const data = buildSchedule(principal, annualRate, years, startDate, validPrepayments, validRates, fixedEmi);
-      renderSchedule(data, paidMonths, validPrepayments.length > 0, validRates.length > 0);
+      renderSchedule(data, paidMonths, validPrepayments.length > 0, validRates.length > 0, principal);
       scheduleSection.classList.add('show');
+
+      const baseSchedule = buildSchedule(principal, annualRate, years, startDate, [], [], fixedEmi);
+      const originalEnd = baseSchedule.length > 0 ? baseSchedule[baseSchedule.length - 1].dueDate : startDate;
+      document.getElementById('originalEndDate').textContent = formatDate(originalEnd);
+
+      const hasAnyEvents = validPrepayments.length > 0 || validRates.length > 0;
+      if (hasAnyEvents) {
+        const impacts = computeEventImpacts(principal, annualRate, years, startDate, validPrepayments, validRates, fixedEmi);
+        renderEventsSummary(validEvents, impacts);
+      } else {
+        document.getElementById('eventsSummary').style.display = 'none';
+      }
     }
 
-    function renderSchedule(rows, paidMonths, hasPrepay, hasRateChanges) {
-      let emiPaid = 0, principalPaid = 0, interestPaid = 0;
+    function renderSchedule(rows, paidMonths, hasPrepay, hasRateChanges, principal) {
+      let emiPaid = 0, interestPaid = 0;
       let currentBalance = 0;
       let prevRate = rows.length > 0 ? rows[0].rate : null;
 
@@ -726,7 +918,6 @@
         if (rateChanged) prevRate = r.rate;
         if (isPaid) {
           emiPaid += r.emi;
-          principalPaid += r.principal;
           interestPaid += r.interest;
         }
         if (idx === paidMonths - 1) currentBalance = r.balance;
@@ -749,20 +940,28 @@
       if (paidMonths === 0 && rows.length > 0) currentBalance = rows[0].balance;
       else if (paidMonths > rows.length) currentBalance = 0;
 
+      const totalPrepayInPaid = rows.slice(0, paidMonths).reduce((s, r) => s + r.prepay, 0);
+      const principalPaid = principal - currentBalance - totalPrepayInPaid;
+      const totalPrincipalPaid = principalPaid + totalPrepayInPaid;
+
       const extras = (hasPrepay ? ' with prepayments' : '') + (hasRateChanges ? ' with rate changes' : '');
       scheduleCount.textContent = rows.length + ' months' + extras;
-      sumEmi.textContent = formatMoney(emiPaid);
-      sumPrincipal.textContent = formatMoney(principalPaid);
-      sumInterest.textContent = formatMoney(interestPaid);
+      document.getElementById('sumEmisPaid').textContent = paidMonths;
+      document.getElementById('sumTotalEmi').textContent = formatMoney(emiPaid);
+      document.getElementById('sumPrincipalPaid').textContent = formatMoney(principalPaid);
+      document.getElementById('sumInterestPaid').textContent = formatMoney(interestPaid);
+      document.getElementById('sumPrepayments').textContent = formatMoney(totalPrepayInPaid);
+      document.getElementById('sumTotalPrincipalPaid').textContent = formatMoney(totalPrincipalPaid);
       sumLeft.textContent = formatMoney(currentBalance);
       sumEmisLeft.textContent = rows.length - paidMonths;
+      const lastEmiDate = rows.length > 0 ? rows[rows.length - 1].dueDate : null;
+      document.getElementById('sumLastEmiDate').textContent = lastEmiDate ? formatDate(lastEmiDate) : '—';
     }
 
     calculateBtn.addEventListener('click', runCalculation);
 
     saveBtn.addEventListener('click', () => {
-      rebuildPrepayments();
-      rebuildRateChanges();
+      rebuildEvents();
       saveToStorage();
       showSaved();
     });
@@ -786,15 +985,17 @@
             }
           });
         }
-        if (data.prepayments && data.prepayments.length) {
-          prepayList.innerHTML = '';
-          prepayments = [];
-          data.prepayments.forEach(p => createPrepayEntry(p.date, p.amount));
-        }
-        if (data.rateChanges && data.rateChanges.length) {
-          rateChangeList.innerHTML = '';
-          rateChanges = [];
-          data.rateChanges.forEach(r => createRateEntry(r.date, r.rate));
+        if (data.events && data.events.length) {
+          eventList.innerHTML = '';
+          events = [];
+          data.events.forEach(e => createEventEntry(e.type || 'prepay', e.date, e.value));
+        } else if (data.prepayments && data.prepayments.length) {
+          eventList.innerHTML = '';
+          events = [];
+          data.prepayments.forEach(p => createEventEntry('prepay', p.date, p.amount));
+          if (data.rateChanges && data.rateChanges.length) {
+            data.rateChanges.forEach(r => createEventEntry('rate', r.date, r.rate));
+          }
         }
         return true;
       } catch(e) {
@@ -807,32 +1008,34 @@
     }
 
     document.getElementById('downloadPdf').addEventListener('click', () => {
-      const btn = document.getElementById('downloadPdf');
-      const origText = btn.textContent;
-      btn.textContent = 'Generating...';
-      btn.disabled = true;
+      const existing = document.querySelector('.print-only');
+      if (existing) existing.remove();
 
       const wrap = document.querySelector('.schedule-wrap');
-      const origMaxH = wrap.style.maxHeight;
-      const origOverflow = wrap.style.overflow;
       wrap.style.maxHeight = 'none';
       wrap.style.overflow = 'visible';
 
+      const printContainer = document.getElementById('scheduleSection').cloneNode(true);
+      printContainer.classList.add('print-only');
+
       const formSummary = document.createElement('div');
-      formSummary.style.cssText = 'padding:0 0 16px 0;font-family: sans-serif;';
+      formSummary.style.cssText = 'padding:0 0 16px 0;font-family:sans-serif;font-size:13px;color:#333';
       let eventsHtml = '';
-      const validPrepay = prepayments.filter(p => p.date && p.amount > 0);
-      const validRates = rateChanges.filter(r => r.date && r.rate != null && !isNaN(r.rate) && r.rate > 0);
-      if (validPrepay.length) {
-        eventsHtml += '<div style="margin-top:6px"><strong>Prepayments:</strong> ' +
-          validPrepay.map(p => formatDate(new Date(p.date + 'T00:00:00')) + ' - ' + formatMoney(p.amount)).join(' | ') + '</div>';
-      }
-      if (validRates.length) {
-        eventsHtml += '<div style="margin-top:6px"><strong>Rate Changes:</strong> ' +
-          validRates.map(r => formatDate(new Date(r.date + 'T00:00:00')) + ' - ' + r.rate + '%').join(' | ') + '</div>';
+      const validEvts = events.filter(e => e.date && e.value > 0);
+      if (validEvts.length) {
+        const prepayEvts = validEvts.filter(e => e.type === 'prepay');
+        const rateEvts = validEvts.filter(e => e.type === 'rate');
+        if (prepayEvts.length) {
+          eventsHtml += '<div style="margin-top:6px"><strong>Prepayments:</strong> ' +
+            prepayEvts.map(e => formatDate(new Date(e.date + 'T00:00:00')) + ' - ' + formatMoney(e.value)).join(' | ') + '</div>';
+        }
+        if (rateEvts.length) {
+          eventsHtml += '<div style="margin-top:6px"><strong>Rate Changes:</strong> ' +
+            rateEvts.map(e => formatDate(new Date(e.date + 'T00:00:00')) + ' - ' + e.value + '%').join(' | ') + '</div>';
+        }
       }
       formSummary.innerHTML = `
-        <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px;color:#333;margin-bottom:12px">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:12px">
           <div><strong>Loan Amount:</strong> ${formatMoney(parseFloat(amountInput.value))}</div>
           <div><strong>Rate:</strong> ${rateInput.value}%</div>
           <div><strong>Term:</strong> ${yearsInput.value} yrs</div>
@@ -841,32 +1044,16 @@
         </div>
         ${eventsHtml}
       `;
+      printContainer.prepend(formSummary);
 
-      const clone = document.getElementById('scheduleSection').cloneNode(true);
-      const summaryClone = formSummary;
-      const pdfContainer = document.createElement('div');
-      pdfContainer.style.cssText = 'padding:20px;background:white;';
-      pdfContainer.appendChild(summaryClone);
-      pdfContainer.appendChild(clone);
+      document.body.appendChild(printContainer);
 
-      const hidden = document.createElement('div');
-      hidden.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:10000';
-      hidden.appendChild(pdfContainer);
-      document.body.appendChild(hidden);
-
-      html2pdf().set({
-        margin: 0.4,
-        filename: 'loan-schedule.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
-      }).from(pdfContainer).save().then(() => {
-        document.body.removeChild(hidden);
-        wrap.style.maxHeight = origMaxH;
-        wrap.style.overflow = origOverflow;
-        btn.textContent = origText;
-        btn.disabled = false;
-      });
+      setTimeout(() => {
+        window.print();
+        document.body.removeChild(printContainer);
+        wrap.style.maxHeight = '';
+        wrap.style.overflow = '';
+      }, 100);
     });
   </script>
 </body>
